@@ -4,7 +4,8 @@ import pygame
 import pdb
 
 class Board(object):
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.rows = 19
         self.cols = 19
         self.win_count = 5
@@ -37,8 +38,31 @@ class Board(object):
                     return True
 
     def draw_board(self, window):
-        pass
+        # draw board
+        for i in range(1,self.config.rows+1):
+            start_x = i*50
+            start_y = 50
+            end_y = 950
+            pygame.draw.line(window, (0,0,0), (start_x, start_y), (start_x, end_y))
 
+        for i in range(1,self.config.cols+1):
+            start_x = 50
+            start_y = i*50
+            end_x = 950
+            pygame.draw.line(window, (0,0,0), (start_x, start_y), (end_x, start_y))
+
+
+        # draw points
+        for i in range(self.config.rows):
+            for j in range(self.config.cols):
+                if self.board[i][j] == 1:
+                    x_pos = (i+1)*50
+                    y_pos = (j+1)*50
+                    pygame.draw.circle(window, (255, 255, 255), (x_pos, y_pos), 12, 0)
+                elif self.board[i][j] == 2:
+                    x_pos = (i+1)*50
+                    y_pos = (j+1)*50
+                    pygame.draw.circle(window, (0, 0, 0), (x_pos, y_pos), 12, 0)
 
 
 
