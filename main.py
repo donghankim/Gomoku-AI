@@ -3,6 +3,7 @@ import numpy as np
 import pygame
 from player import Player
 from board import Board
+import agent
 import pdb
 
 
@@ -43,62 +44,91 @@ def basic_window(window, board):
     blit_message(window, "Gomoku", "welcome")
     board.draw_board(window)
 
+def switch_player(p1, p2):
+    temp = p1
+    p1 = p2
+    p2 = temp
+    return p1, p2
+
 def main():
     program_run = True
     config = get_args()
     board = Board(config)
     p1 = Player(config, 'player 1', 'white')
-    p2 = Player(config, 'player 2', 'black')
+    # p2 = Player(config, 'player 2', 'black')
+    # p2 = agent.Naiive(config, 'computer', 'black')
+    p2 = agent.Heuristic(config, 'computer', 'black')
     curr_player = p1
+    wait_player = p2
 
-    pygame.init()
-    window = pygame.display.set_mode((config.window_x, config.window_y))
-    pygame.display.set_caption("Gomoku AI")
-    clock = pygame.time.Clock()
-
-    # Game loop
-    while board.game_run:
-        basic_window(window, board)
-        blit_message(window, f"{curr_player.name}'s turn", "turn")
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                board.game_run = False
-                terminate()
-                return
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                x_pos, y_pos = event.pos
-                x_board = abs(round(x_pos/50) - 1)
-                y_board = abs(round(y_pos/50) - 1)
-                # print(x_board, y_board)
-                # print(board.board)
+    # no gui play (for debugging)
+    if config.no_gui:
+        while board.game_run:
+            print(board.board)
+            if curr_player.name == 'computer':
+                x_board, y_board = curr_player.make_move(wait_player, board)
+                board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                if board.game_run:
+                    curr_player, wait_player = switch_player(curr_player, wait_player)
+            else:
+                pos_in = list(map(int, input("Enter points: ").split()))
+                x_board, y_board = pos_in[0], pos_in[1]
                 if curr_player.valid_move(y_board, x_board, board.board):
-                    board.board[y_board][x_board] = curr_player.token
-                    if board.check_win(curr_player.token):
+                    board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                    if board.game_run:
+                        curr_player, wait_player = switch_player(curr_player, wait_player)
+
+    # pygame application
+    else:
+        pygame.init()
+        window = pygame.display.set_mode((config.window_x, config.window_y))
+        pygame.display.set_caption("Gomoku AI")
+        clock = pygame.time.Clock()
+
+        # Game loop
+        while board.game_run:
+            basic_window(window, board)
+            blit_message(window, f"{curr_player.name}'s turn", "turn")
+
+            if curr_player.name == 'computer':
+                x_board, y_board = curr_player.make_move(wait_player, board)
+                board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                if board.game_run:
+                    curr_player, wait_player = switch_player(curr_player, wait_player)
+
+            else:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         board.game_run = False
-                    else:
-                        if curr_player == p1:
-                            curr_player = p2
-                        else:
-                            curr_player = p1
+                        terminate()
+                        return
 
-        pygame.display.update()
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        x_pos, y_pos = event.pos
+                        x_board = abs(round(x_pos/50) - 1)
+                        y_board = abs(round(y_pos/50) - 1)
+                        if curr_player.valid_move(y_board, x_board, board.board):
+                            board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                            if board.game_run:
+                                curr_player, wait_player = switch_player(curr_player, wait_player)
 
-    # Game terminated
-    while program_run:
-        basic_window(window, board)
-        blit_message(window, f"{curr_player.name} wins!", "win message")
+            pygame.display.update()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                program_run = False
-                break
 
-        pygame.display.update()
+        # Game terminated
+        while program_run:
+            basic_window(window, board)
+            blit_message(window, f"{curr_player.name} wins!", "win message")
 
-    terminate()
-    return
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    program_run = False
+                    break
+
+            pygame.display.update()
+
+        terminate()
+        return
 
 
 if __name__ == '__main__':

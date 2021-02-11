@@ -1,5 +1,3 @@
-import pdb
-
 class Player(object):
     def __init__(self, config, name, token):
         self.config = config
@@ -15,6 +13,12 @@ class Player(object):
         self.history = []
         self.win = False
 
+    def set_move(self, curr_player, x, y, board):
+        board.board[y][x] = curr_player.token
+        if board.check_win(curr_player.token):
+            return False
+        else:
+            return True
 
     def valid_move(self,x,y,board):
         if x > self.config.cols-1 or y > self.config.rows-1:
@@ -32,9 +36,6 @@ class Player(object):
 
     # check for 3-3 rule (do this last)
     def check_33(self, token):
-        pass
-
-    def evaluate(self, board):
         pass
 
 
