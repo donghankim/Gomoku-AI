@@ -17,7 +17,7 @@ class Player(object):
 
 
     def valid_move(self,x,y,board):
-        if x > self.config.cols or y > self.config.rows:
+        if x > self.config.cols-1 or y > self.config.rows-1:
             print("Move out of bounds.")
             return False
         elif x < 0 or y < 0:

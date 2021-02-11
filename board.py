@@ -14,28 +14,29 @@ class Board(object):
 
     def check_win(self, token):
         # check horizontal
-        for i in range(self.cols - self.win_count +1):
-            for j in range(self.rows):
+        for i in range(self.cols):
+            for j in range(self.rows - self.win_count +1):
                 if self.board[i][j] == token and self.board[i][j+1] == token and self.board[i][j+2] == token and self.board[i][j+3] == token and self.board[i][j+4] == token:
                     return True
 
         # check vertical
-        for i in range(self.cols):
-            for j in range(self.rows - self.win_count +1):
+        for i in range(self.cols - self.win_count + 1):
+            for j in range(self.rows):
                 if self.board[i][j] == token and self.board[i+1][j] == token and self.board[i+2][j] == token and self.board[i+3][j] == token and self.board[i+4][j] == token:
                     return True
 
-        # check positive diagonal
-        for i in range(self.cols - self.win_count +1):
-            for j in range(self.rows - self.win_count +1):
-                if self.board[i][j] == token and self.board[i+1][j+1] == token and self.board[i+2][j+2] == token and self.board[i+3][j+3] == token and self.board[i+4][j+4] == token:
+        # check negative diagonal
+        for i in range(self.win_count-1, self.cols):
+            for j in range(self.win_count-1, self.rows):
+                if self.board[i][j] == token and self.board[i-1][j-1] == token and self.board[i-2][j-2] == token and self.board[i-3][j-3] == token and self.board[i-4][j-4] == token:
                     return True
 
-        #check negative diagonal
-        for i in range(self.cols - self.win_count + 1):
-            for j in range(self.rows):
+        #check positive diagonal
+        for i in range(self.win_count-1, self.cols):
+            for j in range(self.rows - self.win_count-1):
                 if self.board[i][j] == token and self.board[i-1][j+1] == token and self.board[i-2][j+2] == token and self.board[i-3][j+3] == token and self.board[i-4][j+4] == token:
                     return True
+
 
     def draw_board(self, window):
         # draw board
@@ -56,14 +57,13 @@ class Board(object):
         for i in range(self.config.rows):
             for j in range(self.config.cols):
                 if self.board[i][j] == 1:
-                    x_pos = (i+1)*50
-                    y_pos = (j+1)*50
+                    x_pos = (j+1)*50
+                    y_pos = (i+1)*50
                     pygame.draw.circle(window, (255, 255, 255), (x_pos, y_pos), 12, 0)
                 elif self.board[i][j] == 2:
-                    x_pos = (i+1)*50
-                    y_pos = (j+1)*50
+                    x_pos = (j+1)*50
+                    y_pos = (i+1)*50
                     pygame.draw.circle(window, (0, 0, 0), (x_pos, y_pos), 12, 0)
-
 
 
 
