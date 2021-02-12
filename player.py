@@ -6,9 +6,11 @@ class Player(object):
         if token == 'white':
             self.color = (255,255,255)
             self.token = 1
+            self.op_token = 2
         else:
             self.color = (0,0,0)
             self.token = 2
+            self.op_token = 1
 
         self.history = []
         self.win = False
