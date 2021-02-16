@@ -66,15 +66,15 @@ def main():
         while board.game_run:
             print(board.board)
             if curr_player.name == 'computer':
-                x_board, y_board = curr_player.make_move(wait_player, board)
-                board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                row_board, col_board = curr_player.make_move(wait_player, board)
+                board.game_run = curr_player.set_move(curr_player, row_board, col_board, board)
                 if board.game_run:
                     curr_player, wait_player = switch_player(curr_player, wait_player)
             else:
                 pos_in = list(map(int, input("Enter points: ").split()))
-                x_board, y_board = pos_in[0], pos_in[1]
-                if curr_player.valid_move(y_board, x_board, board.board):
-                    board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                row_board, col_board = pos_in[0], pos_in[1]
+                if curr_player.valid_move(row_board, col_board, board):
+                    board.game_run = curr_player.set_move(curr_player, row_board, col_board, board)
                     if board.game_run:
                         curr_player, wait_player = switch_player(curr_player, wait_player)
 
@@ -91,8 +91,8 @@ def main():
             blit_message(window, f"{curr_player.name}'s turn", "turn")
 
             if curr_player.name == 'computer':
-                x_board, y_board = curr_player.make_move(wait_player, board)
-                board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                row_board, col_board = curr_player.make_move(curr_player, wait_player, board)
+                board.game_run = curr_player.set_move(curr_player, row_board, col_board, board)
                 if board.game_run:
                     curr_player, wait_player = switch_player(curr_player, wait_player)
 
@@ -105,10 +105,10 @@ def main():
 
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         x_pos, y_pos = event.pos
-                        x_board = abs(round(x_pos/50) - 1)
-                        y_board = abs(round(y_pos/50) - 1)
-                        if curr_player.valid_move(y_board, x_board, board.board):
-                            board.game_run = curr_player.set_move(curr_player, x_board, y_board, board)
+                        col_board = abs(round(x_pos/50) - 1)
+                        row_board = abs(round(y_pos/50) - 1)
+                        if curr_player.valid_move(row_board, col_board, board):
+                            board.game_run = curr_player.set_move(curr_player, row_board, col_board, board)
                             if board.game_run:
                                 curr_player, wait_player = switch_player(curr_player, wait_player)
 
